@@ -38,3 +38,19 @@ resource "aws_route_table_association" "public" {
   subnet_id      = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.public.id
 }
+
+data "aws_ami" "amazon_linux" {
+  most_recent = true
+  owners      = ["amazon"]
+  filter{
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+    }
+}
+
+resource "aws_instance" "web" {
+subnet_id = aws_subnet.public[0].id
+ami = data.aws_ami.amazon_linux.id
+instance_type = "t2.micro"
+associate_public_ip_address = true
+}
